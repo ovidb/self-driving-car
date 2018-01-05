@@ -75,5 +75,11 @@ class ReplayMemory(object):
         # This will contain the last n events
         self.memory = []
 
+    # It will append a new event in memory and will make sure that it does not exceed the capacity
+    def push_events(self, event):
+        self.memory.append(event)
+        if len(self.memory) > self.capacity:
+            del self.memory[0]
+
 
 
