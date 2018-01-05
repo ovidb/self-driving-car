@@ -16,7 +16,7 @@ import torch
 import torch.nn as nn
 # contains the different function, typically the loss function, we will use
 # uber loss from this module because it improves convergence
-import torch.nn.functional as f
+import torch.nn.functional as F
 # the optimizer to perform SGD
 import torch.optim as optim
 # we import autograd just to take the Variable Class from it.
@@ -48,6 +48,16 @@ class Network(nn.Module):
         self.fc1 = nn.Linear(input_size, 30)
         # Second connection is between hidden layer and output
         self.fc2 = nn.Linear(30, nb_action)
+
+    # The function that will do the forward propagation
+    # and it will also return the Q values for the current state.
+    def forward(self, state):
+        # To get the activated neurons we will use a rectifier function
+        # from the torch.nn.function
+        activated_hidden_neurons = F.relu(self.fc1(state))
+        # output neurons
+        q_values = self.fc2(activated_hidden_neurons)
+        return q_values
 
 
 
