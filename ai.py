@@ -60,6 +60,20 @@ class Network(nn.Module):
         return q_values
 
 
+###
+# Implementing Experience Replay
+###
+
+class ReplayMemory(object):
+    # The init
+    def __init__(self, capacity):
+
+        # Variable declarations
+
+        # How many events it will
+        self.capacity = capacity
+        # This will contain the last n events
+        self.memory = []
 
 
 
