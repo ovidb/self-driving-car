@@ -81,5 +81,20 @@ class ReplayMemory(object):
         if len(self.memory) > self.capacity:
             del self.memory[0]
 
+    # The sample function will take some random elements from the memory
+    def sample(self, batch_size):
+        # Basically because we have an input of the form
+        # [[state1, action1, reward1], [state2, action2, reward2]]
+        # but for our algorithm we need it to be of the form
+        # [[state1, state2], [action1, action2], [reward1, reward2]
+        # we'll use the zip() function which reshapes the array
+        # the * operator here unpacks the array, sort of like ... (spread) in js
+        sample = zip(*random.sample(self.memory, batch_size))
+
+        # We will map over the samples and convert the torch tensor to a Variable containing
+        # a tensor and gradient. We use torch.cat to make sure that we have it's first dimension
+        # lined up (state action and reward) we use index 0 for that.
+        return map(lambda x: Variable(torch.cat(x, 0)), sample)
+
 
 
