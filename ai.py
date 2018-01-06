@@ -36,7 +36,10 @@ class Network(nn.Module):
         super(Network, self).__init__()
 
         # Variable declarations
+
+        # The number of dimensions in the vector that are encoding the input state
         self.input_size = input_size
+        # The number of action the car can take (go left, go straight, go right)
         self.nb_action = nb_action
 
         # The full connection variables
@@ -95,6 +98,43 @@ class ReplayMemory(object):
         # a tensor and gradient. We use torch.cat to make sure that we have it's first dimension
         # lined up (state action and reward) we use index 0 for that.
         return map(lambda x: Variable(torch.cat(x, 0)), sample)
+
+
+###
+# Implementing Deep Q Learning
+###
+
+class Dqn():
+
+    def __init__(self, input_size, nb_action, gamma):
+        # the delay coefficient of the equation
+        self.gamma = gamma
+        # The reward window. The sliding window of mean the last n rewards, used to evaluate the performance
+        # We will append the mean of the rewards over time
+        self.reward_window = []
+        # The neural network
+        self.model = Network(input_size, nb_action)
+        # The memory of 10^4 states
+        self.memory = ReplayMemory(100000)
+        # The optimizer. We will choose the Adam optimizer
+        # We will pass along the parameters of our model, and the learning rate
+        self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
+        # The transition events
+        # The last state
+        # We use unsqueeze to create a fake dimension for the batch. It should be the first dimension.
+        # When working with neural network, the input vectors can't be by an input vector by itself.
+        # The network can only accept a batch of input observations.
+        self.last_state = torch.Tensor(input_size).unsqueeze(0)
+        # The last action
+        # Because the action can be either 0, 1, 2 which will represent the index from the action2rotation
+        # which is the rotation the car will take, basically [0, 20, -20]. So if index is 0 the car will go straight
+        self.last_action = 0
+        # The last reward
+        # It will be a float number between -1 and 1.
+        self.last_reward = 0
+
+
+
 
 
 
